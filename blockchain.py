@@ -29,8 +29,7 @@ class Blockchain:
         self.chain.append(block)
         return block
 
-    # make new transactin & add it to the list
-    @staticmethod
+    # make new transactin & add it to the list that will be added to next block
     def new_transaction(self, sender, recipient, amount):
         self.current_transactions.append({
             'sender' : sender,
@@ -42,7 +41,7 @@ class Blockchain:
     # get last block of the chain
     @property
     def last_block(self):
-        pass
+        return self.chain[-1]
 
     # make hash number from a block
     @staticmethod
@@ -53,14 +52,14 @@ class Blockchain:
     # algorithm of PoW
     def proof_of_work(self, last_proof):
         proof = 0
-        while self.valid_proof(last_proof, prof) is False:
+        while self.valid_proof(last_proof, proof) is False:
             proof += 1
         return proof
 
     # valid if not proof is true
     @staticmethod
     def valid_proof(last_proof, proof):
-        guess = '{last_proof}{proof}'.encode()
+        guess = '{}{}'.format(last_proof, proof).encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
 
         return guess_hash[:4] == "0000"
@@ -97,7 +96,7 @@ def new_transaction():
 
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
 
-    response = {'message' : 'the transaction was add to {index} block'}
+    response = {'message' : 'the transaction was add to {} block'.format(index)}
     return jsonify(response), 201
 
 @app.route('/mine', methods = ['GET'])
